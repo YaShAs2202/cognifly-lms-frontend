@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: sans-serif;
+/* Automatically offset page content below fixed Navbar */
+  padding-top: 4rem; /* equal to Navbar height (h-16 = 4rem) */
+}
