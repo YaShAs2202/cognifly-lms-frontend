@@ -1,13 +1,72 @@
+import { useState } from "react";
+
 export default function Certificate() {
+  const [loading, setLoading] = useState(false);
+  const [downloadUrl, setDownloadUrl] = useState("");
+
+  // Replace with selected courseId (e.g., from route or a dropdown)
+  const [courseId, setCourseId] = useState("");
+
+  const handleGenerate = async () => {
+    if (!courseId) {
+      alert("Select a course to generate certificate");
+      return;
+    }
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/certificates/generate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ courseId }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setDownloadUrl(`${import.meta.env.VITE_API_BASE_URL}${data.download}`);
+      } else {
+        alert(data.message || "Failed to generate");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Network error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDownload = () => {
+    window.open(downloadUrl, "_blank");
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-xl rounded-2xl p-10 w-[40rem] text-center border-4 border-indigo-600">
-        <h1 className="text-4xl font-bold text-indigo-700 mb-4">Certificate of Completion</h1>
-        <p className="text-lg text-gray-700">This is proudly presented to</p>
-        <h2 className="text-3xl font-bold text-gray-900 my-4">John Doe</h2>
-        <p className="text-lg text-gray-700">for successfully completing the course</p>
-        <h3 className="text-2xl font-semibold text-indigo-600 mt-2">Full Stack Development</h3>
-        <p className="text-gray-500 mt-6">Issued on: Sept 26, 2025</p>
+    <div className="min-h-screen bg-gray-50 p-10">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">🎓 Certificates</h1>
+
+      <div className="bg-white rounded-xl shadow p-6 border border-gray-200 max-w-xl">
+        <label className="block text-sm text-gray-600 mb-2">Course ID</label>
+        <input
+          value={courseId}
+          onChange={(e) => setCourseId(e.target.value)}
+          placeholder="Paste a courseId"
+          className="w-full p-3 border rounded-lg mb-4"
+        />
+
+        <button
+          onClick={handleGenerate}
+          disabled={loading}
+          className="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-60"
+        >
+          {loading ? "Generating..." : "Generate Certificate"}
+        </button>
+
+        {downloadUrl && (
+          <button onClick={handleDownload} className="ml-3 bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700">
+            Download PDF
+          </button>
+        )}
       </div>
     </div>
   );
