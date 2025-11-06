@@ -1,6 +1,6 @@
 // src/components/Navbar.jsx
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -13,32 +13,57 @@ function Navbar() {
   };
 
   const user = JSON.parse(localStorage.getItem("user"));
+  const userRole = user?.role;
+
+  const renderLinks = () => {
+    switch (userRole) {
+      case "student":
+        return (
+          <>
+            <NavLink to="/dashboard" className="hover:text-blue-600">Dashboard</NavLink>
+            <NavLink to="/courses" className="hover:text-blue-600">Courses</NavLink>
+            <NavLink to="/progress" className="hover:text-blue-600">Progress</NavLink>
+          </>
+        );
+      case "teacher":
+        return (
+          <>
+            <NavLink to="/dashboard" className="hover:text-blue-600">Dashboard</NavLink>
+            <NavLink to="/courses" className="hover:text-blue-600">Courses</NavLink>
+            <NavLink to="/progress" className="hover:text-blue-600">Student Progress</NavLink>
+          </>
+        );
+      case "admin":
+        return (
+          <>
+            <NavLink to="/dashboard" className="hover:text-blue-600">Dashboard</NavLink>
+            <NavLink to="/courses" className="hover:text-blue-600">Courses</NavLink>
+            <NavLink to="/progress" className="hover:text-blue-600">Analytics</NavLink>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-white shadow-md z-50 h-16 flex items-center justify-between px-6 md:px-10">
       {/* Logo */}
-      <h1 className="text-2xl font-bold text-blue-700 flex items-center gap-1">
+      <h1
+        onClick={() => navigate("/dashboard")}
+        className="text-2xl font-bold text-blue-700 flex items-center gap-1 cursor-pointer"
+      >
         Cognifly LMS <span className="text-pink-500">🚀</span>
       </h1>
 
       {/* Desktop Menu */}
-      <div className="hidden md:flex items-center gap-6">
-        <Link to="/dashboard" className="hover:text-blue-600">
-          Dashboard
-        </Link>
-        <Link to="/courses" className="hover:text-blue-600">
-          Manage Courses
-        </Link>
-        <Link to="/payment" className="hover:text-blue-600">
-          Student Progress
-        </Link>
-      </div>
+      <div className="hidden md:flex items-center gap-6">{renderLinks()}</div>
 
       {/* Right side */}
       <div className="hidden md:flex items-center gap-4">
         {user && (
           <span className="bg-green-100 text-green-800 px-3 py-1 rounded-lg text-sm font-medium capitalize">
-            {user.role}
+            {userRole}
           </span>
         )}
         <button
@@ -82,34 +107,12 @@ function Navbar() {
       {/* Mobile Dropdown */}
       {menuOpen && (
         <div className="absolute top-16 left-0 w-full bg-white shadow-lg flex flex-col items-center py-4 space-y-4 md:hidden transition-all duration-300">
-          <Link
-            to="/dashboard"
-            onClick={() => setMenuOpen(false)}
-            className="text-gray-800 hover:text-blue-600"
-          >
-            Dashboard
-          </Link>
-          <Link
-            to="/courses"
-            onClick={() => setMenuOpen(false)}
-            className="text-gray-800 hover:text-blue-600"
-          >
-            Manage Courses
-          </Link>
-          <Link
-            to="/payment"
-            onClick={() => setMenuOpen(false)}
-            className="text-gray-800 hover:text-blue-600"
-          >
-            Student Progress
-          </Link>
-
+          {renderLinks()}
           {user && (
             <span className="bg-green-100 text-green-800 px-3 py-1 rounded-lg text-sm font-medium capitalize">
-              {user.role}
+              {userRole}
             </span>
           )}
-
           <button
             onClick={() => {
               handleLogout();

@@ -14,9 +14,13 @@ import ProtectedRoute from "./components/ProtectedRoute";
 function AppContent() {
   const location = useLocation();
 
-  // Hide Navbar on Login and Signup pages
+  // Hide Navbar on login and signup pages
   const hideNavbarRoutes = ["/", "/signup"];
   const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
+
+  // Retrieve user role
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userRole = user?.role;
 
   return (
     <>
@@ -26,7 +30,25 @@ function AppContent() {
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* Protected Routes */}
+        {/* Unified Dashboard route (auto-redirects by role) */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              {userRole === "student" ? (
+                <StudentDashboard />
+              ) : userRole === "teacher" ? (
+                <TeacherDashboard />
+              ) : userRole === "admin" ? (
+                <AdminDashboard />
+              ) : (
+                <Login />
+              )}
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Role-specific dashboards (optional direct access) */}
         <Route
           path="/dashboard/student"
           element={
@@ -52,9 +74,31 @@ function AppContent() {
           }
         />
 
-        {/* Open (Optional) Pages */}
-        <Route path="/courses" element={<Courses />} />
-        <Route path="/payment" element={<Payment />} />
+        {/* Common Pages */}
+        <Route
+          path="/courses"
+          element={
+            <ProtectedRoute>
+              <Courses />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/progress"
+          element={
+            <ProtectedRoute>
+              <Certificate /> {/* Replace with actual Progress page later */}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payment"
+          element={
+            <ProtectedRoute>
+              <Payment />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/certificate"
           element={
