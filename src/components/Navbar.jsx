@@ -57,7 +57,12 @@ function Navbar() {
       </h1>
 
       {/* Desktop Menu */}
-      <div className="hidden md:flex items-center gap-6">{renderLinks()}</div>
+      <div className="hidden md:flex items-center gap-6">{user?.role === "student" && (
+  <Link to="/my-courses" className="hover:text-blue-600">
+    My Courses
+  </Link>
+)}
+{renderLinks()}</div>
 
       {/* Right side */}
       <div className="hidden md:flex items-center gap-4">

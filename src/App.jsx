@@ -1,6 +1,7 @@
 // src/App.jsx
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Courses from "./pages/Courses";
@@ -11,26 +12,32 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Certificate from "./pages/Certificate";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+// ✅ IMPORT CreateCoursePage (IMPORTANT)
+import CreateCoursePage from "./pages/CreateCoursePage"; 
+// Make sure this file exists: src/pages/CreateCoursePage.jsx
+
 function AppContent() {
   const location = useLocation();
 
-  // Hide Navbar on login and signup pages
-  const hideNavbarRoutes = ["/", "/signup"];
+  // Hide navbar on these pages
+  const hideNavbarRoutes = ["/", "/signup", "/landing", "/login"];
   const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
 
-  // Retrieve user role
   const user = JSON.parse(localStorage.getItem("user"));
   const userRole = user?.role;
 
   return (
     <>
       {shouldShowNavbar && <Navbar />}
+
       <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Login />} />
+        {/* ---------- PUBLIC ROUTES ---------- */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/landing" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* Unified Dashboard route (auto-redirects by role) */}
+        {/* ---------- DASHBOARD (AUTO REDIRECT BASED ON ROLE) ---------- */}
         <Route
           path="/dashboard"
           element={
@@ -48,7 +55,7 @@ function AppContent() {
           }
         />
 
-        {/* Role-specific dashboards (optional direct access) */}
+        {/* ---------- ROLE SPECIFIC DASHBOARDS ---------- */}
         <Route
           path="/dashboard/student"
           element={
@@ -57,6 +64,7 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/dashboard/teacher"
           element={
@@ -65,6 +73,7 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/dashboard/admin"
           element={
@@ -74,7 +83,7 @@ function AppContent() {
           }
         />
 
-        {/* Common Pages */}
+        {/* ---------- COURSES & PAYMENT ---------- */}
         <Route
           path="/courses"
           element={
@@ -83,14 +92,7 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/progress"
-          element={
-            <ProtectedRoute>
-              <Certificate /> {/* Replace with actual Progress page later */}
-            </ProtectedRoute>
-          }
-        />
+
         <Route
           path="/payment"
           element={
@@ -99,11 +101,23 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+
+        {/* ---------- STUDENT CERTIFICATES ---------- */}
         <Route
           path="/certificate"
           element={
             <ProtectedRoute>
               <Certificate />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ---------- TEACHER: CREATE COURSE PAGE ---------- */}
+        <Route
+          path="/teacher/create-course"
+          element={
+            <ProtectedRoute>
+              <CreateCoursePage />
             </ProtectedRoute>
           }
         />
