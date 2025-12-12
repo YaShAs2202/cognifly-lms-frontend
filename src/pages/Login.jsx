@@ -19,21 +19,26 @@ function Login() {
     e.preventDefault();
 
     try {
-      const res = await fetch("https://cognifly-lms-backend.onrender.com/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const res = await fetch(
+        "https://cognifly-lms-backend.onrender.com/api/auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
 
       const data = await res.json();
 
       if (res.ok) {
+        // Save user data
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("userId", data.user._id); // ✅ FIXED — very important
 
         alert(`Welcome back, ${data.user.name}!`);
 
-        // Redirect based on user role
+        // Redirect based on role
         if (data.user.role === "student") navigate("/dashboard/student");
         else if (data.user.role === "teacher") navigate("/dashboard/teacher");
         else if (data.user.role === "admin") navigate("/dashboard/admin");
@@ -48,15 +53,12 @@ function Login() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-900 via-gray-800 to-black relative overflow-hidden">
-      {/* Background glow animation */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-20 blur-3xl animate-pulse"></div>
 
-      {/* Animated header */}
       <h1 className="absolute top-8 text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 drop-shadow-lg animate-pulse">
         Cognifly LMS 🚀
       </h1>
 
-      {/* Login card */}
       <div className="relative z-10 w-full max-w-md bg-gray-900/80 backdrop-blur-xl p-8 rounded-2xl shadow-2xl border border-gray-700 hover:border-blue-500 transition-all mt-10">
         <h2 className="text-3xl font-bold text-center mb-4 text-white">
           Welcome Back 👋
@@ -86,7 +88,6 @@ function Login() {
             required
           />
 
-          {/* Role Selector */}
           <select
             name="role"
             value={formData.role}

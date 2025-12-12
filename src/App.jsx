@@ -1,5 +1,11 @@
 // src/App.jsx
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+
 import Navbar from "./components/Navbar";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
@@ -11,15 +17,16 @@ import TeacherDashboard from "./pages/TeacherDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Certificate from "./pages/Certificate";
 import ProtectedRoute from "./components/ProtectedRoute";
-
-// ✅ IMPORT CreateCoursePage (IMPORTANT)
-import CreateCoursePage from "./pages/CreateCoursePage"; 
-// Make sure this file exists: src/pages/CreateCoursePage.jsx
+import CourseDetail from "./pages/CourseDetail";
+import MyCourses from "./pages/MyCourses";
+import CreateCoursePage from "./pages/CreateCoursePage";
+import CourseDemo from "./pages/CourseDemo";
+import Progress from "./pages/Progress"; // ⭐ Single Progress Page
 
 function AppContent() {
   const location = useLocation();
 
-  // Hide navbar on these pages
+  // Hide navbar only on login/signup/landing
   const hideNavbarRoutes = ["/", "/signup", "/landing", "/login"];
   const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
 
@@ -37,7 +44,11 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* ---------- DASHBOARD (AUTO REDIRECT BASED ON ROLE) ---------- */}
+        {/* ---------- COURSE ROUTES ---------- */}
+        <Route path="/course/:id" element={<CourseDetail />} />
+        <Route path="/course-demo" element={<CourseDemo />} />
+
+        {/* ---------- DASHBOARD AUTO-REDIRECT ---------- */}
         <Route
           path="/dashboard"
           element={
@@ -55,7 +66,7 @@ function AppContent() {
           }
         />
 
-        {/* ---------- ROLE SPECIFIC DASHBOARDS ---------- */}
+        {/* ---------- SPECIFIC DASHBOARDS ---------- */}
         <Route
           path="/dashboard/student"
           element={
@@ -83,7 +94,7 @@ function AppContent() {
           }
         />
 
-        {/* ---------- COURSES & PAYMENT ---------- */}
+        {/* ---------- COURSES & MY COURSES ---------- */}
         <Route
           path="/courses"
           element={
@@ -94,6 +105,16 @@ function AppContent() {
         />
 
         <Route
+          path="/my-courses"
+          element={
+            <ProtectedRoute>
+              <MyCourses />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ---------- PAYMENT ---------- */}
+        <Route
           path="/payment"
           element={
             <ProtectedRoute>
@@ -102,7 +123,7 @@ function AppContent() {
           }
         />
 
-        {/* ---------- STUDENT CERTIFICATES ---------- */}
+        {/* ---------- CERTIFICATE PAGE ---------- */}
         <Route
           path="/certificate"
           element={
@@ -112,7 +133,17 @@ function AppContent() {
           }
         />
 
-        {/* ---------- TEACHER: CREATE COURSE PAGE ---------- */}
+        {/* ---------- PROGRESS PAGE ---------- */}
+        <Route
+          path="/progress"
+          element={
+            <ProtectedRoute>
+              <Progress />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ---------- CREATE COURSE ---------- */}
         <Route
           path="/teacher/create-course"
           element={

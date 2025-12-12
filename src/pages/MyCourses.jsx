@@ -10,12 +10,6 @@ export default function MyCourses() {
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    if (!userId) {
-      setLoading(false);
-      return;
-    }
-
-    // Fetch enrolled courses from backend
     const fetchCourses = async () => {
       try {
         const res = await fetch(
@@ -24,9 +18,9 @@ export default function MyCourses() {
 
         const data = await res.json();
         setEnrolledCourses(data.courses || []);
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch courses:", error);
+      } catch (err) {
+        console.error("Fetch error:", err);
+      } finally {
         setLoading(false);
       }
     };
@@ -34,17 +28,14 @@ export default function MyCourses() {
     fetchCourses();
   }, [userId]);
 
-  const handleContinue = (courseId) => {
-    navigate(`/course/${courseId}`);
-  };
+  const handleContinue = (cid) => navigate(`/course/${cid}`);
 
-  if (loading) {
+  if (loading)
     return (
-      <div className="text-center mt-20 text-xl text-gray-700 font-semibold">
+      <div className="text-center text-xl mt-20 text-gray-700">
         Loading your courses...
       </div>
     );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 p-10">
@@ -54,8 +45,7 @@ export default function MyCourses() {
 
       {enrolledCourses.length === 0 ? (
         <div className="text-center text-gray-600 mt-20">
-          <p className="text-lg mb-4">You haven’t enrolled in any courses yet.</p>
-
+          <p className="text-lg mb-4">You have not enrolled in any course yet.</p>
           <button
             onClick={() => navigate("/courses")}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
@@ -65,33 +55,32 @@ export default function MyCourses() {
         </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {enrolledCourses.map((course) => (
+          {enrolledCourses.map((c) => (
             <div
-              key={course._id}
-              className="relative bg-white rounded-2xl shadow-lg transition-transform transform hover:-translate-y-2 hover:shadow-2xl"
+              key={c._id}
+              className="bg-white rounded-2xl shadow-lg p-6 hover:-translate-y-2 transition"
             >
-              <div className="relative z-10 p-6">
-                <img
-                  src={course.thumbnail}
-                  alt={course.title}
-                  className="rounded-xl mb-4 w-full h-44 object-cover border border-gray-200 shadow-sm"
-                  onError={(e) => {
-                    e.target.src =
-                      "https://via.placeholder.com/800x400.png?text=Course+Image";
-                  }}
-                />
+              <img
+                src={c.thumbnail}
+                className="rounded-xl mb-4 w-full h-44 object-cover"
+              />
+              <h2 className="text-xl font-semibold mb-3">{c.title}</h2>
+              <button
+                onClick={() => handleContinue(c._id)}
+                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+              >
+                Continue Learning
+              </button>
+              <button
+  onClick={() => {
+    localStorage.setItem("lastCompletedCourse", JSON.stringify(course));
+    navigate("/certificate");
+  }}
+  className="w-full mt-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+>
+  Get Certificate
+</button>
 
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                  {course.title}
-                </h2>
-
-                <button
-                  onClick={() => handleContinue(course._id)}
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-800 transition"
-                >
-                  Continue Learning
-                </button>
-              </div>
             </div>
           ))}
         </div>

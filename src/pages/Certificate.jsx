@@ -1,72 +1,41 @@
-import { useState } from "react";
+// src/pages/Certificate.jsx
+import React, { useEffect, useState } from "react";
 
 export default function Certificate() {
-  const [loading, setLoading] = useState(false);
-  const [downloadUrl, setDownloadUrl] = useState("");
+  const [course, setCourse] = useState(null);
 
-  // Replace with selected courseId (e.g., from route or a dropdown)
-  const [courseId, setCourseId] = useState("");
-
-  const handleGenerate = async () => {
-    if (!courseId) {
-      alert("Select a course to generate certificate");
-      return;
+  // Get the last completed course
+  useEffect(() => {
+    const saved = localStorage.getItem("lastCompletedCourse");
+    if (saved) {
+      setCourse(JSON.parse(saved));
     }
-    setLoading(true);
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/certificates/generate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ courseId }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setDownloadUrl(`${import.meta.env.VITE_API_BASE_URL}${data.download}`);
-      } else {
-        alert(data.message || "Failed to generate");
-      }
-    } catch (e) {
-      console.error(e);
-      alert("Network error");
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, []);
 
-  const handleDownload = () => {
-    window.open(downloadUrl, "_blank");
-  };
+  if (!course) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-600 text-xl">
+        ❌ No completed course found. Complete a course to earn a certificate!
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-10">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">🎓 Certificates</h1>
+    <div className="min-h-screen flex flex-col items-center justify-center p-6">
+      <div className="bg-white shadow-xl border-2 border-yellow-400 p-10 rounded-xl text-center w-full max-w-2xl">
+        <h1 className="text-3xl font-extrabold text-yellow-600 mb-4">
+          🎉 Certificate of Completion
+        </h1>
 
-      <div className="bg-white rounded-xl shadow p-6 border border-gray-200 max-w-xl">
-        <label className="block text-sm text-gray-600 mb-2">Course ID</label>
-        <input
-          value={courseId}
-          onChange={(e) => setCourseId(e.target.value)}
-          placeholder="Paste a courseId"
-          className="w-full p-3 border rounded-lg mb-4"
-        />
+        <p className="text-lg text-gray-700 mb-6">
+          This is to certify that you have successfully completed:
+        </p>
 
-        <button
-          onClick={handleGenerate}
-          disabled={loading}
-          className="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-60"
-        >
-          {loading ? "Generating..." : "Generate Certificate"}
-        </button>
+        <h2 className="text-2xl font-bold text-blue-600 mb-6">
+          {course.title}
+        </h2>
 
-        {downloadUrl && (
-          <button onClick={handleDownload} className="ml-3 bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700">
-            Download PDF
-          </button>
-        )}
+        <p className="text-gray-500">Presented by Cognifly LMS</p>
       </div>
     </div>
   );

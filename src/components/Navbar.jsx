@@ -22,7 +22,7 @@ function Navbar() {
           <>
             <NavLink to="/dashboard" className="hover:text-blue-600">Dashboard</NavLink>
             <NavLink to="/courses" className="hover:text-blue-600">Courses</NavLink>
-            <NavLink to="/progress" className="hover:text-blue-600">Progress</NavLink>
+            
           </>
         );
       case "teacher":
@@ -127,6 +127,8 @@ function Navbar() {
           >
             Logout
           </button>
+          <button onClick={() => navigate("/progress")}>Progress</button>
+
         </div>
       )}
     </nav>
