@@ -1,3 +1,4 @@
+// src/pages/Login.jsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Login.css";
@@ -8,7 +9,11 @@ function Login() {
     password: "",
     role: "student",
   });
+
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState(""); // success | error
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -17,6 +22,9 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("");
+    setMessageType("");
+    setLoading(true);
 
     try {
       const res = await fetch(
@@ -31,23 +39,30 @@ function Login() {
       const data = await res.json();
 
       if (res.ok) {
-        // Save user data
+        // Save auth data
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("userId", data.user._id); // ✅ FIXED — very important
+        localStorage.setItem("userId", data.user._id);
 
-        alert(`Welcome back, ${data.user.name}!`);
+        setMessage(`Welcome back, ${data.user.name}!`);
+        setMessageType("success");
 
-        // Redirect based on role
-        if (data.user.role === "student") navigate("/dashboard/student");
-        else if (data.user.role === "teacher") navigate("/dashboard/teacher");
-        else if (data.user.role === "admin") navigate("/dashboard/admin");
+        // Small delay for UX, then redirect
+        setTimeout(() => {
+          if (data.user.role === "student") navigate("/dashboard/student");
+          else if (data.user.role === "teacher") navigate("/dashboard/teacher");
+          else if (data.user.role === "admin") navigate("/dashboard/admin");
+        }, 1000);
       } else {
-        alert(data.message || "Login failed");
+        setMessage(data.message || "Invalid email or password");
+        setMessageType("error");
       }
     } catch (error) {
-      setMessage("⚠️ Error connecting to server.");
       console.error(error);
+      setMessage("⚠️ Unable to connect to server. Please try again.");
+      setMessageType("error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,7 +71,7 @@ function Login() {
       <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-20 blur-3xl animate-pulse"></div>
 
       <h1 className="absolute top-8 text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 drop-shadow-lg animate-pulse">
-        Cognifly LMS 🚀
+        AeroMind LMS 🚀
       </h1>
 
       <div className="relative z-10 w-full max-w-md bg-gray-900/80 backdrop-blur-xl p-8 rounded-2xl shadow-2xl border border-gray-700 hover:border-blue-500 transition-all mt-10">
@@ -64,8 +79,21 @@ function Login() {
           Welcome Back 👋
         </h2>
         <p className="text-center text-gray-400 mb-6">
-          Login to your Cognifly LMS account
+          Login to your AeroMind LMS account
         </p>
+
+        {/* Success / Error Message */}
+        {message && (
+          <p
+            className={`mb-8 text-center text-sm font-medium ${
+              messageType === "success"
+                ? "text-green-400"
+                : "text-red-400"
+            }`}
+          >
+            {message}
+          </p>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -94,22 +122,24 @@ function Login() {
             onChange={handleChange}
             className="w-full p-3 border rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
-            <option value="student">🎓 Student</option>
-            <option value="teacher">👨‍🏫 Teacher</option>
-            <option value="admin">🛠️ Admin</option>
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+            <option value="admin">Admin</option>
           </select>
 
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-2 rounded-lg transition font-semibold shadow-lg"
+            disabled={loading}
+            className={`w-full py-2 rounded-lg transition font-semibold shadow-lg text-white
+              ${
+                loading
+                  ? "bg-gray-600 cursor-not-allowed"
+                  : "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+              }`}
           >
-            Sign In
+            {loading ? "Signing In..." : "Sign In"}
           </button>
         </form>
-
-        {message && (
-          <p className="mt-4 text-center text-sm text-red-400">{message}</p>
-        )}
 
         <p className="mt-6 text-center text-gray-400">
           Don’t have an account?{" "}

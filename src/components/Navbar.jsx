@@ -53,7 +53,7 @@ function Navbar() {
         onClick={() => navigate("/dashboard")}
         className="text-2xl font-bold text-blue-700 flex items-center gap-1 cursor-pointer"
       >
-        Cognifly LMS <span className="text-pink-500">🚀</span>
+        AeroMind LMS <span className="text-pink-500">🚀</span>
       </h1>
 
       {/* Desktop Menu */}

@@ -1,66 +1,65 @@
-// src/pages/DashboardStudent.jsx
+// src/pages/StudentDashboard.jsx
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-function DashboardStudent() {
+function StudentDashboard() {
+  const navigate = useNavigate();
+
+  // ✅ Read completed courses
+  const completedCourses = Object.keys(localStorage)
+    .filter((key) => key.startsWith("course_completed_"))
+    .map((key) => JSON.parse(localStorage.getItem(key)));
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-10 ">
-      {/* Header */}
-      <header className="flex justify-center items-center mb-10">
-        <h1 className="text-3xl font-extrabold text-blue-800 tracking-wide">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-10">
+      <header className="flex justify-center mb-10">
+        <h1 className="text-3xl font-extrabold text-blue-800">
           🎓 Student Dashboard
         </h1>
       </header>
 
-      {/* Welcome Section */}
-      <section className="text-center mb-10">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-          Welcome to Your Learning Space!
-        </h2>
-        <p className="text-gray-600">
-          Track your progress, check upcoming lessons, and earn certificates 🚀
-        </p>
-      </section>
-
-      {/* Dashboard Cards */}
       <section className="grid md:grid-cols-3 gap-8">
         {/* My Courses */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200 hover:shadow-xl transition">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">📘 My Courses</h2>
-
-          <p className="text-gray-600 mb-2">AI Foundations — 70% complete</p>
-          <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
-            <div className="bg-blue-600 h-2.5 rounded-full w-[70%]"></div>
-          </div>
-
-          <p className="text-gray-600 mb-2">Drone Technology — 40% complete</p>
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
-            <div className="bg-blue-400 h-2.5 rounded-full w-[40%]"></div>
-          </div>
+        <div className="bg-white p-6 rounded-xl shadow">
+          <h2 className="text-xl font-semibold mb-3">📘 My Courses</h2>
+          <p className="text-gray-600">
+            AI Free Demo Course —{" "}
+            {completedCourses.length > 0 ? "100% Complete" : "In Progress"}
+          </p>
         </div>
 
         {/* Upcoming Lessons */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200 hover:shadow-xl transition">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">🗓️ Upcoming Lessons</h2>
-          <ul className="space-y-2 text-gray-600">
-            <li>📅 Drone Flight Dynamics — Tomorrow</li>
-            <li>📅 AI Ethics — Friday</li>
+        <div className="bg-white p-6 rounded-xl shadow">
+          <h2 className="text-xl font-semibold mb-3">🗓️ Upcoming Lessons</h2>
+          <ul className="text-gray-600">
+            <li>AI Agents</li>
+            <li>Prompt Engineering</li>
           </ul>
         </div>
 
         {/* Certificates */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200 hover:shadow-xl transition">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">🏅 Certificates</h2>
-          <p className="text-gray-600 mb-4">
-            Earn certificates as you complete your courses.
-          </p>
-          <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition shadow">
-            View Certificates
-          </button>
-          
+        <div className="bg-white p-6 rounded-xl shadow">
+          <h2 className="text-xl font-semibold mb-4">🏅 Certificates</h2>
+
+          {completedCourses.length === 0 ? (
+            <p className="text-gray-600">
+              No certificates yet. Complete a course 🎯
+            </p>
+          ) : (
+            completedCourses.map((course) => (
+              <button
+                key={course.courseId}
+                onClick={() => navigate(`/certificate/${course.courseId}`)}
+                className="w-full mb-3 bg-green-600 text-white py-3 rounded-lg font-semibold"
+              >
+                🎓 View Certificate — {course.courseTitle}
+              </button>
+            ))
+          )}
         </div>
       </section>
     </div>
   );
 }
 
-export default DashboardStudent;
+export default StudentDashboard;

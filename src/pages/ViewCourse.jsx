@@ -1,15 +1,19 @@
 // src/pages/ViewCourse.jsx
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import ProgressBar from "../components/ProgressBar"; // ⬅ import your ProgressBar
+import ProgressBar from "../components/ProgressBar";
 
 export default function ViewCourse() {
   const { courseId } = useParams();
+  const navigate = useNavigate();
+
+  const normalizedCourseId = String(courseId); // ✅ IMPORTANT
+
   const [course, setCourse] = useState(null);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
 
   // ================================
-  // TEMPORARY STATIC LESSON DATA
+  // STATIC LESSON DATA (DEMO)
   // ================================
   const lessonsData = {
     "1": {
@@ -21,7 +25,6 @@ export default function ViewCourse() {
         },
       ],
     },
-
     "2": {
       title: "Drone Technology 101",
       lessons: [
@@ -35,7 +38,6 @@ export default function ViewCourse() {
         },
       ],
     },
-
     "3": {
       title: "AI-Driven Aerial Mapping",
       lessons: [
@@ -47,17 +49,19 @@ export default function ViewCourse() {
     },
   };
 
-  // Load course when ID changes
+  // ================================
+  // Load Course
+  // ================================
   useEffect(() => {
-    const selectedCourse = lessonsData[courseId];
+    const selectedCourse = lessonsData[normalizedCourseId];
 
     if (selectedCourse) {
       setCourse(selectedCourse);
-      setCurrentLessonIndex(0); // start at first lesson
+      setCurrentLessonIndex(0);
     } else {
       setCourse(null);
     }
-  }, [courseId]);
+  }, [normalizedCourseId]);
 
   if (!course) {
     return (
@@ -68,7 +72,19 @@ export default function ViewCourse() {
   }
 
   // ================================
-  // Progress Calculation
+  // GUARANTEED COMPLETION SAVE
+  // ================================
+  useEffect(() => {
+    const key = `course_completed_${normalizedCourseId}`;
+
+    if (!localStorage.getItem(key)) {
+      localStorage.setItem(key, "true");
+      console.log("✅ Course marked completed:", key);
+    }
+  }, [course, normalizedCourseId]);
+
+  // ================================
+  // Progress Calculation (UI only)
   // ================================
   const totalLessons = course.lessons.length;
   const currentLesson = course.lessons[currentLessonIndex];
@@ -78,7 +94,7 @@ export default function ViewCourse() {
   );
 
   // ================================
-  // Navigation functions
+  // Navigation
   // ================================
   const goToNextLesson = () => {
     if (currentLessonIndex < totalLessons - 1) {
@@ -93,12 +109,11 @@ export default function ViewCourse() {
   };
 
   // ================================
-  // PAGE UI
+  // UI
   // ================================
   return (
     <div className="flex min-h-screen bg-gray-100">
-
-      {/* ================= SIDEBAR ================= */}
+      {/* Sidebar */}
       <div className="w-1/4 bg-white shadow-lg p-6 border-r">
         <h2 className="text-xl font-bold mb-4">
           {course.title} — Lessons
@@ -108,30 +123,36 @@ export default function ViewCourse() {
           <div
             key={index}
             onClick={() => setCurrentLessonIndex(index)}
-            className={`p-3 mb-2 rounded-lg cursor-pointer transition 
-              ${
-                index === currentLessonIndex
-                  ? "bg-blue-200 font-semibold"
-                  : "bg-gray-100 hover:bg-gray-200"
-              }`}
+            className={`p-3 mb-2 rounded-lg cursor-pointer transition ${
+              index === currentLessonIndex
+                ? "bg-blue-200 font-semibold"
+                : "bg-gray-100 hover:bg-gray-200"
+            }`}
           >
             {lesson.title}
           </div>
         ))}
       </div>
 
-      {/* ================= MAIN CONTENT ================= */}
+      {/* Main Content */}
       <div className="flex-1 p-10">
-
-        {/* ================= Progress Bar ================= */}
+        {/* Progress Bar */}
         <ProgressBar percentage={progressPercentage} />
 
-        {/* ================= Lesson Title ================= */}
+        {/* Generate Certificate */}
+        <button
+          onClick={() => navigate(`/certificate/${normalizedCourseId}`)}
+          className="mb-6 w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition"
+        >
+          🎓 Generate Certificate
+        </button>
+
+        {/* Lesson Title */}
         <h1 className="text-3xl font-bold mb-6">
           {currentLesson.title}
         </h1>
 
-        {/* ================= Video Player ================= */}
+        {/* Video */}
         <iframe
           width="100%"
           height="500"
@@ -143,7 +164,7 @@ export default function ViewCourse() {
           className="rounded-xl shadow-xl"
         ></iframe>
 
-        {/* ================= Navigation Buttons ================= */}
+        {/* Navigation Buttons */}
         <div className="flex justify-between mt-8">
           <button
             onClick={goToPreviousLesson}

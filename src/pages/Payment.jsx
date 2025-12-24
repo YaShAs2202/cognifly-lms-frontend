@@ -3,20 +3,24 @@ import { useNavigate } from "react-router-dom";
 
 export default function Payment() {
   const navigate = useNavigate();
-  const [qrUrl, setQrUrl] = useState("");
 
-  // Values saved from CourseDetail.jsx and Login.jsx
+  const [qrUrl, setQrUrl] = useState("");
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState(""); // success | error
+  const [loading, setLoading] = useState(false);
+
+  // Values saved earlier
   const userId = localStorage.getItem("userId");
   const courseId = localStorage.getItem("selectedCourseId");
-  const amount = localStorage.getItem("selectedCoursePrice") || 0;
+  const amount = localStorage.getItem("selectedCoursePrice") || 399;
 
-  // Generate QR code with amount
+  // Generate QR code
   useEffect(() => {
-    const upiID = "9481012202@pthdfc"; // your UPI ID
-    const name = "Yashas"; // Your display name for UPI
+    const upiID = "9481012202@pthdfc";
+    const name = "Yashas";
     const upiLink = `upi://pay?pa=${upiID}&pn=${name}&am=${amount}&cu=INR`;
 
-    const qrImage = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${encodeURIComponent(
+    const qrImage = `https://i.ibb.co/SYnzzf3/Whats-App-Image-2025-11-11-at-6-22-39-PM.jpg=${encodeURIComponent(
       upiLink
     )}`;
 
@@ -25,15 +29,22 @@ export default function Payment() {
 
   // Handle Payment Confirmation
   const handleConfirmPayment = async () => {
+    setMessage("");
+    setMessageType("");
+
     if (!userId) {
-      alert("User ID missing! Login again.");
+      setMessage("⚠️ Please login again to continue payment.");
+      setMessageType("error");
       return;
     }
 
     if (!courseId) {
-      alert("Course ID missing!");
+      setMessage("⚠️ Course information missing. Please select a course again.");
+      setMessageType("error");
       return;
     }
+
+    setLoading(true);
 
     try {
       const response = await fetch(
@@ -48,14 +59,23 @@ export default function Payment() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Payment confirmed! You are now enrolled in the course.");
-        navigate("/my-courses");
+        setMessage("✅ Payment successful! You are now enrolled in the course.");
+        setMessageType("success");
+
+        // Redirect after short delay
+        setTimeout(() => {
+          navigate("/my-courses");
+        }, 1500);
       } else {
-        alert(data.msg || "Payment confirmation failed.");
+        setMessage(data.msg || "❌ Payment confirmation failed.");
+        setMessageType("error");
       }
     } catch (error) {
       console.error("Payment Error:", error);
-      alert("Server error. Please try again.");
+      setMessage("❌ Server error. Please try again later.");
+      setMessageType("error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,32 +86,51 @@ export default function Payment() {
           Complete Your Payment 💳
         </h1>
 
-        <p className="text-gray-700 mb-3">Amount to Pay:</p>
-        <p className="text-2xl font-bold text-green-600 mb-4">₹{1}</p>
+        <p className="text-gray-700 mb-2">Amount to Pay</p>
+        <p className="text-3xl font-bold text-green-600 mb-4">₹{amount}</p>
 
-        <p className="text-gray-900 mb-4">Scan the QR to pay</p>
-      <p className="text-gray-600 mb-4">(pay with Google pay,Paytm,Phonepay or any UPI apps)</p>
-
+        <p className="text-gray-900 mb-1">Scan the QR to pay</p>
+        <p className="text-gray-600 mb-4 text-sm">
+          (Pay with Google Pay / PhonePe / Paytm / Any UPI App)
+        </p>
 
         {/* QR Code */}
         <img
-            src="https://i.ibb.co/SYnzzf3/Whats-App-Image-2025-11-11-at-6-22-39-PM.jpg"
+          src={qrUrl}
           alt="UPI QR Code"
           className="w-56 h-56 mx-auto mb-5 shadow-lg border rounded-lg"
         />
 
-        <p className="text-gray-700 mt-4">
+        <p className="text-gray-700 mt-3">
           UPI ID:{" "}
           <span className="text-blue-700 font-semibold">
             9481012202@pthdfc
           </span>
         </p>
 
+        {/* Success / Error Message */}
+        {message && (
+          <p
+            className={`mt-4 text-sm font-medium ${
+              messageType === "success"
+                ? "text-green-800"
+                : "text-red-700"
+            }`}
+          >
+            {message}
+          </p>
+        )}
+
         <button
           onClick={handleConfirmPayment}
-          className="mt-6 w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+          disabled={loading}
+          className={`mt-6 w-full py-3 rounded-lg font-semibold text-white transition ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
+          }`}
         >
-          I’ve Completed the Payment
+          {loading ? "Verifying Payment..." : "I’ve Completed the Payment"}
         </button>
       </div>
     </div>

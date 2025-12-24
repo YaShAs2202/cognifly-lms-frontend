@@ -15,11 +15,11 @@ function LandingPage() {
         >
           <img
             src="https://cdn-icons-png.flaticon.com/512/3135/3135768.png"
-            alt="Cognifly Logo"
+            alt="AeroMind Logo"
             className="w-9 h-9"
           />
           <h1 className="text-2xl font-extrabold text-blue-700 tracking-tight">
-            Cognifly <span className="text-blue-500">LMS</span>
+            AeroMind <span className="text-blue-500">LMS</span>
           </h1>
         </div>
 
@@ -65,7 +65,7 @@ function LandingPage() {
         <div className="md:w-1/2">
           <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
             Unlock Your Full Potential with{" "}
-            <span className="text-blue-600">Cognifly LMS</span>
+            <span className="text-blue-600">AeroMind LMS</span>
           </h2>
           <p className="text-lg text-gray-600 mb-6 leading-relaxed">
             A modern learning platform designed to make studying easier, faster,
@@ -108,12 +108,12 @@ function LandingPage() {
         className="mt-24 bg-white py-16 px-10 md:px-24 text-center"
       >
         <h3 className="text-3xl font-bold text-gray-900 mb-6">
-          What Makes Cognifly LMS Different?
+          What Makes AeroMind LMS Different?
         </h3>
         <p className="max-w-3xl mx-auto text-gray-600 text-lg">
-          Cognifly LMS was built for students who want to learn smarter, not
+          AeroMind LMS was built for students who want to learn smarter, not
           harder. Whether you’re studying for college, preparing for a
-          certification, or exploring new skills, Cognifly gives you a
+          certification, or exploring new skills, AeroMind gives you a
           personalized, guided, and engaging learning experience.
         </p>
       </section>
@@ -124,7 +124,7 @@ function LandingPage() {
         className="py-20 bg-gradient-to-r from-blue-100 to-blue-50 px-10 md:px-24"
       >
         <h3 className="text-3xl font-bold text-gray-900 text-center mb-12">
-          Why Students Love Cognifly LMS 💙
+          Why Students Love AeroMind LMS 💙
         </h3>
         <div className="grid md:grid-cols-3 gap-10">
           <div className="p-8 rounded-xl bg-white shadow-md hover:shadow-xl transition text-center">
@@ -183,7 +183,7 @@ function LandingPage() {
           Join Thousands of Students Already Learning Smarter 🚀
         </h3>
         <p className="max-w-2xl mx-auto text-lg mb-8 text-blue-50">
-          Cognifly LMS is your gateway to smarter, self-paced, and engaging
+          AeroMind LMS is your gateway to smarter, self-paced, and engaging
           education. Learn what matters — and achieve your goals faster than
           ever.
         </p>
@@ -197,7 +197,7 @@ function LandingPage() {
 
       {/* 🌈 Footer */}
       <footer className="bg-white py-6 text-center text-gray-600 text-sm border-t">
-        © {new Date().getFullYear()} Cognifly LMS. Empowering students through
+        © {new Date().getFullYear()} AeroMind LMS. Empowering students through
         smarter learning.
       </footer>
     </div>

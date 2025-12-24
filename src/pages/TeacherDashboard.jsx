@@ -10,7 +10,7 @@ export default function TeacherDashboard() {
       {/* Header */}
       <header className="text-center py-10">
         <h1 className="text-4xl font-extrabold text-green-800 flex justify-center items-center gap-2">
-          <span role="img" aria-label="teacher">👩‍🏫</span> Teacher Dashboard
+          <span role="img" aria-label="teacher"></span> Teacher Dashboard
         </h1>
         <p className="text-gray-700 text-lg mt-3">
           Welcome, Instructor!

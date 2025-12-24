@@ -25,7 +25,7 @@ export default function Courses() {
       title: "Drone Technology 101",
       description:
         "Understand drone components, flight dynamics, and basic maintenance.",
-      price: 249,
+      price: 399,
       thumbnail:
         "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=800",
     },
@@ -34,7 +34,7 @@ export default function Courses() {
       title: "AI-Driven Aerial Mapping",
       description:
         "Use drones and AI for mapping, surveying, and environmental monitoring.",
-      price: 349,
+      price: 399,
       thumbnail:
         "https://images.pexels.com/photos/10085647/pexels-photo-10085647.jpeg?auto=compress&cs=tinysrgb&w=800",
     },
@@ -53,7 +53,7 @@ export default function Courses() {
       title: "Drone Programming with Python",
       description:
         "Learn to control drones programmatically using Python SDKs and APIs.",
-      price: 299,
+      price: 399,
       thumbnail:
         "https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=800",
     },

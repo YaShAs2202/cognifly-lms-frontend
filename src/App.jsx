@@ -132,6 +132,7 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+<Route path="/certificate/:courseId" element={<Certificate />} />
 
         {/* ---------- PROGRESS PAGE ---------- */}
         <Route
